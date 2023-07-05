@@ -18,3 +18,4 @@ dependencies:
     - seaborn
     - wandb
     - kaggle
+    - ipykernel
