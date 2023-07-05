@@ -1,0 +1,20 @@
+name: twitter
+channels:
+  - pytorch
+  - nvidia
+  - defaults
+  - conda-forge
+dependencies:
+  - python>=3.10
+  - pip
+  - pytorch=2.0.0
+  - pytorch-cuda=11.7
+  - pip:
+    - transformers>=4.30.0
+    - numpy>=1.24.0
+    - pandas
+    - scikit-learn>=1.2.0
+    - jupyterlab
+    - seaborn
+    - wandb
+    - kaggle
