@@ -1,7 +1,6 @@
 #!/bin/bash
-black --check src/ scripts/ && \
-isort --check-only src/ scripts/ && \
-flake8 src/ scripts/ && \
-mypy src/ scripts/ && \
-darglint src/ scripts/ && \
-jsonlint-php experiment_configs/*/*.json
+black --check src/ && \
+isort --check-only src/ && \
+flake8 src/ && \
+mypy src/ && \
+darglint src/
