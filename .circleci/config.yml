@@ -1,0 +1,30 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@2.1.1
+
+jobs:
+  lint:
+    executor: python/default
+    steps:
+      - checkout # checkout source code
+      - python/install-packages:
+          pkg-manager: pip-dist
+      - python/install-packages:
+          pkg-manager: pip
+          pip-dependency-file: requirements.txt
+      - run:
+          name: Install jsonlint-php
+          command: sudo apt-get update && sudo apt-get install -y jsonlint
+      - run:
+          name: Lint
+          command: bash ./lint.sh
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - .
+
+workflows:
+   lint_and_test:
+      jobs:
+         - lint
