@@ -1,0 +1,75 @@
+\begin{table}[htbp]
+    \centering
+    \caption{Model Accuracy}
+    \begin{tabular}{ccccc}
+      \hline
+      Filename & Method & Ngram & Model Type & Accuracy \\
+      \hline
+      raw & 1 & count & linear & 0.803240 \\
+      raw & 1 & count & random\_forest & 0.763644 \\
+      raw & 1 & count & XGBoost & 0.759080 \\
+      raw & 1 & count & Ridge & 0.800404 \\
+      raw & 1 & tf-idf & linear & 0.803072 \\
+      raw & 1 & tf-idf & random\_forest & 0.765840 \\
+      raw & 1 & tf-idf & XGBoost & 0.760388 \\
+      raw & 1 & tf-idf & Ridge & 0.802488 \\
+      raw & 2 & count & linear & 0.751104 \\
+      raw & 2 & count & random\_forest & 0.658952 \\
+      raw & 2 & count & XGBoost & 0.638520 \\
+      raw & 2 & count & Ridge & 0.750440 \\
+      raw & 2 & tf-idf & linear & 0.752840 \\
+      raw & 2 & tf-idf & random\_forest & 0.659952 \\
+      raw & 2 & tf-idf & XGBoost & 0.638796 \\
+      raw & 2 & tf-idf & Ridge & 0.751876 \\
+      cleaned & 1 & count & linear & 0.799334 \\
+      cleaned & 1 & count & random\_forest & 0.753082 \\
+      cleaned & 1 & count & XGBoost & 0.754352 \\
+      cleaned & 1 & count & Ridge & 0.796671 \\
+      cleaned & 1 & tf-idf & linear & 0.799666 \\
+      cleaned & 1 & tf-idf & random\_forest & 0.753569 \\
+      cleaned & 1 & tf-idf & XGBoost & 0.755958 \\
+      cleaned & 1 & tf-idf & Ridge & 0.798237 \\
+      cleaned & 2 & count & linear & 0.745473 \\
+      cleaned & 2 & count & random\_forest & 0.651382 \\
+      cleaned & 2 & count & XGBoost & 0.630904 \\
+      cleaned & 2 & count & Ridge & 0.745026 \\
+      cleaned & 2 & tf-idf & linear & 0.746128 \\
+      cleaned & 2 & tf-idf & random\_forest & 0.652528 \\
+      cleaned & 2 & tf-idf & XGBoost & 0.630856 \\
+      cleaned & 2 & tf-idf & Ridge & 0.745451 \\
+      cleaned\_stopword\_removed & 1 & count & linear & 0.788858 \\
+      cleaned\_stopword\_removed & 1 & count & random\_forest & 0.733286 \\
+      cleaned\_stopword\_removed & 1 & count & XGBoost & 0.740262 \\
+      cleaned\_stopword\_removed & 1 & count & Ridge & 0.786478 \\
+      cleaned\_stopword\_removed & 1 & tf-idf & linear & 0.788694 \\
+      cleaned\_stopword\_removed & 1 & tf-idf & random\_forest & 0.733896 \\
+      cleaned\_stopword\_removed & 1 & tf-idf & XGBoost & 0.743872 \\
+      cleaned\_stopword\_removed & 1 & tf-idf & Ridge & 0.787097 \\
+      cleaned\_stopword\_removed & 2 & count & linear & 0.699465 \\
+      cleaned\_stopword\_removed & 2 & count & random\_forest & 0.614567 \\
+      cleaned\_stopword\_removed & 2 & count & XGBoost & 0.602879 \\
+      cleaned\_stopword\_removed & 2 & count & Ridge & 0.698740 \\
+      cleaned\_stopword\_removed & 2 & tf-idf & linear & 0.700155 \\
+      cleaned\_stopword\_removed & 2 & tf-idf & random\_forest & 0.614863 \\
+      cleaned\_stopword\_removed & 2 & tf-idf & XGBoost & 0.602742 \\
+      cleaned\_stopword\_removed & 2 & tf-idf & Ridge & 0.699894 \\
+      cleaned\_lemmatized & 1 & count & linear & 0.799197 \\
+      cleaned\_lemmatized & 1 & count & random\_forest & 0.757621 \\
+      cleaned\_lemmatized & 1 & count & XGBoost & 0.755223 \\
+      cleaned\_lemmatized & 1 & count & Ridge & 0.796560 \\
+      cleaned\_lemmatized & 1 & tf-idf & linear & 0.798772 \\
+      cleaned\_lemmatized & 1 & tf-idf & random\_forest & 0.760904 \\
+      cleaned\_lemmatized & 1 & tf-idf & XGBoost & 0.757935 \\
+      cleaned\_lemmatized & 1 & tf-idf & Ridge & 0.798568 \\
+      cleaned\_lemmatized & 2 & count & linear & 0.746840 \\
+      cleaned\_lemmatized & 2 & count & random\_forest & 0.652935 \\
+      cleaned\_lemmatized & 2 & count & XGBoost & 0.631754 \\
+      cleaned\_lemmatized & 2 & count & Ridge & 0.746389 \\
+      cleaned\_lemmatized & 2 & tf-idf & linear & 0.747672 \\
+      cleaned\_lemmatized & 2 & tf-idf & random\_forest & 0.653134 \\
+      cleaned\_lemmatized & 2 & tf-idf & XGBoost & 0.632311 \\
+      cleaned\_lemmatized & 2 & tf-idf & Ridge & 0.746969 \\
+      \bottomrule
+    \end{tabular}
+    \label{tab:model_accuracy}
+  \end{table}
