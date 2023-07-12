@@ -3,3 +3,9 @@ isort
 flake8
 mypy
 darglint
+torch==2.0
+transformers
+einops
+accelerate
+xformers
+pandas

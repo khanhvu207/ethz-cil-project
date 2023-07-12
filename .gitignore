@@ -2,3 +2,7 @@ src/data
 data
 startup-files
 *.html
+jobs
+*.egg-info/
+*.vscode/
+__pycache__/
