@@ -10,6 +10,7 @@ dependencies:
   - pytorch=2.0.0
   - pytorch-cuda=11.7
   - pip:
+    - pytorch-lightning>=2.0.0
     - transformers>=4.30.0
     - numpy>=1.24.0
     - pandas
@@ -17,6 +18,8 @@ dependencies:
     - jupyterlab
     - seaborn
     - wandb
+    - omegaconf
+    - fire
     - kaggle
     - ipykernel
     - clean-text[gpl]
