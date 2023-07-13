@@ -20,7 +20,12 @@ outputs/bert_default/${RUN_ID}/${RUN_ID}.ckpt:
 		--debug=${DEBUG} \
 		--config_path=configs/bert_default.yaml
 
-bert_%: outputs/bert_default/${RUN_ID}/${RUN_ID}.ckpt
+outputs/bert_default/${RUN_ID}/submission.csv: outputs/bert_default/${RUN_ID}/${RUN_ID}.ckpt
+	python predict.py --run_id=${RUN_ID} \
+		--ckpt_path=$< \
+		--config_path=configs/bert_default.yaml
+
+bert_%: outputs/bert_default/${RUN_ID}/submission.csv
 	:
 
 bert: bert_default

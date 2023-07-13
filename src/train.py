@@ -41,7 +41,7 @@ class LightningModel(pl.LightningModule):
         y = batch["label"]
         logit = self(x)
         loss = self.loss_fn(logit, y)
-        pred = (F.sigmoid(logit) > 0.5).long().detach()
+        pred = (F.sigmoid(logit) > 0.5).float().detach()
         accuracy = (pred == y).float().mean()
         self.log("train/loss", loss.item())
         self.log("train/accuracy", accuracy.item())
@@ -52,10 +52,17 @@ class LightningModel(pl.LightningModule):
         y = batch["label"]
         logit = self(x)
         loss = self.loss_fn(logit, y)
-        pred = (F.sigmoid(logit) > 0.5).long().detach()
+        pred = (F.sigmoid(logit) > 0.5).float().detach()
         accuracy = (pred == y).float().mean()
         self.log("val/loss", loss.item())
         self.log("val/accuracy", accuracy.item())
+    
+    def predict_step(self, batch, batch_idx):
+        logit = self(batch)
+        if batch["label"] is None:
+            return logit
+        else:
+            return logit, batch["label"]
 
     def configure_optimizers(self):
         # Layerwise learning rate decay for the Transformers backbone
