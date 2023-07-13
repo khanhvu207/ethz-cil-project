@@ -1,15 +1,13 @@
 import os
 import re
+
 import numpy as np
 import pandas as pd
-
+import pytorch_lightning as pl
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
-
+from torch.utils.data import DataLoader, Dataset
 from transformers import AutoTokenizer
-
-import pytorch_lightning as pl
 
 
 class TwitterDataset(Dataset):
@@ -29,11 +27,11 @@ class TwitterDataset(Dataset):
             rng = np.random.default_rng(42)
             rng.shuffle(self.indices)
             if self.mode == "train":
-                self.indices = self.indices[:int(0.9 * len(self.indices))]
-                
+                self.indices = self.indices[: int(0.9 * len(self.indices))]
+
             elif self.mode == "val":
-                self.indices = self.indices[int(0.9 * len(self.indices)):]
-        
+                self.indices = self.indices[int(0.9 * len(self.indices)) :]
+
             # Sort by the tweet's length to make batching faster
             tweet_lengths = np.array([len(self.tweets[i]) for i in self.indices])
             sorted_indices = np.argsort(tweet_lengths)
@@ -41,7 +39,7 @@ class TwitterDataset(Dataset):
 
     def __len__(self):
         return len(self.indices)
-    
+
     def __getitem__(self, idx):
         tweet = self.tweets[self.indices[idx]]
         label = self.labels[self.indices[idx]] if self.mode != "test" else None
@@ -67,15 +65,22 @@ class TwitterDataset(Dataset):
                 "label": torch.tensor(label, dtype=torch.float32),
             }
 
+
 def longest_length_padding(batch):
     input_ids = [item["input_ids"].squeeze() for item in batch]
     token_type_ids = [item["token_type_ids"].squeeze() for item in batch]
     attention_mask = [item["attention_mask"].squeeze() for item in batch]
     labels = [item["label"] for item in batch] if "label" in batch[0] else None
 
-    input_ids = torch.nn.utils.rnn.pad_sequence(input_ids, batch_first=True, padding_value=0)
-    token_type_ids = torch.nn.utils.rnn.pad_sequence(token_type_ids, batch_first=True, padding_value=0)
-    attention_mask = torch.nn.utils.rnn.pad_sequence(attention_mask, batch_first=True, padding_value=0)
+    input_ids = torch.nn.utils.rnn.pad_sequence(
+        input_ids, batch_first=True, padding_value=0
+    )
+    token_type_ids = torch.nn.utils.rnn.pad_sequence(
+        token_type_ids, batch_first=True, padding_value=0
+    )
+    attention_mask = torch.nn.utils.rnn.pad_sequence(
+        attention_mask, batch_first=True, padding_value=0
+    )
 
     batch = {
         "input_ids": input_ids,
@@ -84,6 +89,7 @@ def longest_length_padding(batch):
         "label": torch.tensor(labels).unsqueeze(1) if labels else None,
     }
     return batch
+
 
 class TwitterDataModule(pl.LightningDataModule):
     def __init__(self, **config):
@@ -107,7 +113,7 @@ class TwitterDataModule(pl.LightningDataModule):
             tokenizer=tokenizer,
             mode="val",
         )
-    
+
     def train_dataloader(self):
         return DataLoader(
             self.train_data,

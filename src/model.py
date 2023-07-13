@@ -1,12 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from transformers import AutoConfig, AutoModel
 
-from transformers import AutoModel, AutoConfig
 
 class SentimentNet(nn.Module):
     def __init__(
-        self, 
+        self,
         pretrained,
         backbone_dropout=0.0,
         backbone_layer_norm=1e-7,
@@ -23,17 +23,16 @@ class SentimentNet(nn.Module):
             }
         )
         self.backbone = AutoModel.from_pretrained(
-            pretrained, 
-            config=self.pretrained_config
+            pretrained, config=self.pretrained_config
         )
         self.feature_dim = self.backbone.config.hidden_size
         self.backbone.pooler = None
 
         self.classifier = nn.Sequential(
             nn.Linear(self.feature_dim, cls_hidden),
-            nn.Dropout(p=cls_dropout) if cls_dropout > 0. else nn.Identity(),
+            nn.Dropout(p=cls_dropout) if cls_dropout > 0.0 else nn.Identity(),
             nn.ReLU(),
-            nn.Linear(cls_hidden, 1)
+            nn.Linear(cls_hidden, 1),
         )
 
     def get_tweet_embeddings(self, input_ids, attention_mask):
@@ -47,4 +46,4 @@ class SentimentNet(nn.Module):
         last_layer = layers[-1]
         cls_token = last_layer[:, 0, :]
         logit = self.classifier(cls_token)
-        return logit        
+        return logit
