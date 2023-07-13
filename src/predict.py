@@ -93,14 +93,17 @@ def main(**args):
 
     val_pred_df = pd.DataFrame()
     test_pred_df = pd.DataFrame()
+    test_raw_pred = pd.DataFrame()
     val_pred_df["pred_probability"] = val_preds.squeeze().tolist()
     val_pred_df["label"] = val_labels.squeeze().tolist()
+    test_raw_pred["pred_probability"] = test_preds.squeeze().tolist()
     test_pred_df["Id"] = np.arange(1, test_calibrated_preds.shape[0] + 1)
     test_pred_df["Prediction"] = test_calibrated_preds.squeeze().tolist()
 
     save_dir = os.path.dirname(ckpt_path)
     val_pred_df.to_csv(os.path.join(save_dir, "val_pred.csv"), index=False)
     test_pred_df.to_csv(os.path.join(save_dir, "submission.csv"), index=False)
+    test_raw_pred.to_csv(os.path.join(save_dir, "test_pred.csv"), index=False)
 
 
 if __name__ == "__main__":
