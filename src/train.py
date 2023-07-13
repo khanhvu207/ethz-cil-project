@@ -49,7 +49,7 @@ class LightningModel(pl.LightningModule):
         return loss
 
     def validation_step(self, batch, batch_idx):
-        self.model.dropouts.train() # Monte-Carlo dropout
+        self.model.dropouts.train()  # Monte-Carlo dropout
 
         x = batch
         y = batch["label"]
@@ -61,7 +61,7 @@ class LightningModel(pl.LightningModule):
         self.log("val/accuracy", accuracy.item(), sync_dist=True)
 
     def predict_step(self, batch, batch_idx):
-        self.model.dropouts.train() # Monte-Carlo dropout
+        self.model.dropouts.train()  # Monte-Carlo dropout
 
         logit = self(batch)
         if batch["label"] is None:

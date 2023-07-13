@@ -30,11 +30,9 @@ class SentimentNet(nn.Module):
         self.backbone.pooler = None
 
         self.layer_norm = nn.LayerNorm(self.feature_dim)
-        
+
         if monte_carlo_dropout is True:
-            self.dropouts = nn.ModuleList([
-                nn.Dropout(dropout_rate) for _ in range(5)
-            ])
+            self.dropouts = nn.ModuleList([nn.Dropout(dropout_rate) for _ in range(5)])
         else:
             self.dropouts = nn.ModuleList([nn.Dropout(dropout_rate)])
 
@@ -54,12 +52,14 @@ class SentimentNet(nn.Module):
         layers = self.get_tweet_embeddings(input_ids, attention_mask)
         last_layer = layers[-1]
         cls_token = last_layer[:, 0, :]
-        
+
         cls_token = self.layer_norm(cls_token)
 
         for i, dropout in enumerate(self.dropouts):
-            if i == 0: logit = self.classifier(dropout(cls_token))
-            else: logit += self.classifier(dropout(cls_token))
+            if i == 0:
+                logit = self.classifier(dropout(cls_token))
+            else:
+                logit += self.classifier(dropout(cls_token))
 
         logit /= len(self.dropouts)
         return logit
