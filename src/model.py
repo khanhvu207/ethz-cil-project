@@ -10,8 +10,9 @@ class SentimentNet(nn.Module):
         pretrained,
         backbone_dropout=0.0,
         backbone_layer_norm=1e-7,
-        cls_dropout=0.0,
         cls_hidden=512,
+        monte_carlo_dropout=True,
+        dropout_rate=0.3,
     ):
         super().__init__()
         self.pretrained_config = AutoConfig.from_pretrained(pretrained)
@@ -28,9 +29,17 @@ class SentimentNet(nn.Module):
         self.feature_dim = self.backbone.config.hidden_size
         self.backbone.pooler = None
 
+        self.layer_norm = nn.LayerNorm(self.feature_dim)
+        
+        if monte_carlo_dropout is True:
+            self.dropouts = nn.ModuleList([
+                nn.Dropout(dropout_rate) for _ in range(5)
+            ])
+        else:
+            self.dropouts = nn.ModuleList([nn.Dropout(dropout_rate)])
+
         self.classifier = nn.Sequential(
             nn.Linear(self.feature_dim, cls_hidden),
-            nn.Dropout(p=cls_dropout) if cls_dropout > 0.0 else nn.Identity(),
             nn.ReLU(),
             nn.Linear(cls_hidden, 1),
         )
@@ -45,5 +54,12 @@ class SentimentNet(nn.Module):
         layers = self.get_tweet_embeddings(input_ids, attention_mask)
         last_layer = layers[-1]
         cls_token = last_layer[:, 0, :]
-        logit = self.classifier(cls_token)
+        
+        cls_token = self.layer_norm(cls_token)
+
+        for i, dropout in enumerate(self.dropouts):
+            if i == 0: logit = self.classifier(dropout(cls_token))
+            else: logit += self.classifier(dropout(cls_token))
+
+        logit /= len(self.dropouts)
         return logit

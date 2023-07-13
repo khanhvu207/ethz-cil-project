@@ -2,8 +2,9 @@ model:
   pretrained: bert-base-cased
   backbone_dropout: 0.0
   backbone_layer_norm: 1e-7
-  cls_dropout: 0.0
   cls_hidden: 512
+  monte_carlo_dropout: True
+  dropout_rate: 0.3
 train:
   pretrained: bert-base-cased
   data_dir: data/raw_train.csv
