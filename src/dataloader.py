@@ -16,8 +16,6 @@ class TwitterDataset(Dataset):
     def __init__(self, root, tokenizer, max_length=140, mode="train"):
         self.root = root
         self.tokenizer = tokenizer
-        # self.tokenizer.add_tokens("<user>")
-        # self.tokenizer.add_tokens("<url>")
         self.max_length = max_length
         self.mode = mode
         self.df = pd.read_csv(root)
@@ -25,18 +23,21 @@ class TwitterDataset(Dataset):
         self.labels = self.df["label"] if mode != "test" else None
         self.indices = np.arange(len(self.df))
 
-        rng = np.random.default_rng(42)
-        rng.shuffle(self.indices)
-        if self.mode == "train":
-            self.indices = self.indices[:int(0.9 * len(self.indices))]
-            
-        elif self.mode == "val":
-            self.indices = self.indices[int(0.9 * len(self.indices)):]
+        # When mode="train" or "val", we sort the tweets by their length so that it makes the batching process more efficient
+        # When mode="test", don't do anything! The ordering must be preserved!
+        if mode != "test":
+            rng = np.random.default_rng(42)
+            rng.shuffle(self.indices)
+            if self.mode == "train":
+                self.indices = self.indices[:int(0.9 * len(self.indices))]
+                
+            elif self.mode == "val":
+                self.indices = self.indices[int(0.9 * len(self.indices)):]
         
-        # Sort by the tweet's length to make batching faster
-        tweet_lengths = np.array([len(self.tweets[i]) for i in self.indices])
-        sorted_indices = np.argsort(tweet_lengths)
-        self.indices = self.indices[sorted_indices]
+            # Sort by the tweet's length to make batching faster
+            tweet_lengths = np.array([len(self.tweets[i]) for i in self.indices])
+            sorted_indices = np.argsort(tweet_lengths)
+            self.indices = self.indices[sorted_indices]
 
     def __len__(self):
         return len(self.indices)
@@ -66,6 +67,24 @@ class TwitterDataset(Dataset):
                 "label": torch.tensor(label, dtype=torch.float32),
             }
 
+def longest_length_padding(batch):
+    input_ids = [item["input_ids"].squeeze() for item in batch]
+    token_type_ids = [item["token_type_ids"].squeeze() for item in batch]
+    attention_mask = [item["attention_mask"].squeeze() for item in batch]
+    labels = [item["label"] for item in batch] if "label" in batch[0] else None
+
+    input_ids = torch.nn.utils.rnn.pad_sequence(input_ids, batch_first=True, padding_value=0)
+    token_type_ids = torch.nn.utils.rnn.pad_sequence(token_type_ids, batch_first=True, padding_value=0)
+    attention_mask = torch.nn.utils.rnn.pad_sequence(attention_mask, batch_first=True, padding_value=0)
+
+    batch = {
+        "input_ids": input_ids,
+        "token_type_ids": token_type_ids,
+        "attention_mask": attention_mask,
+        "label": torch.tensor(labels).unsqueeze(1) if labels else None,
+    }
+    return batch
+
 class TwitterDataModule(pl.LightningDataModule):
     def __init__(self, **config):
         super().__init__()
@@ -89,24 +108,6 @@ class TwitterDataModule(pl.LightningDataModule):
             mode="val",
         )
     
-    def collate_fn(self, batch):
-        input_ids = [item["input_ids"].squeeze() for item in batch]
-        token_type_ids = [item["token_type_ids"].squeeze() for item in batch]
-        attention_mask = [item["attention_mask"].squeeze() for item in batch]
-        labels = [item["label"] for item in batch] if "label" in batch[0] else None
-
-        input_ids = torch.nn.utils.rnn.pad_sequence(input_ids, batch_first=True, padding_value=0)
-        token_type_ids = torch.nn.utils.rnn.pad_sequence(token_type_ids, batch_first=True, padding_value=0)
-        attention_mask = torch.nn.utils.rnn.pad_sequence(attention_mask, batch_first=True, padding_value=0)
-
-        batch = {
-            "input_ids": input_ids,
-            "token_type_ids": token_type_ids,
-            "attention_mask": attention_mask,
-            "label": torch.tensor(labels).unsqueeze(1) if labels else None,
-        }
-        return batch
-    
     def train_dataloader(self):
         return DataLoader(
             self.train_data,
@@ -115,7 +116,7 @@ class TwitterDataModule(pl.LightningDataModule):
             num_workers=self.num_workers,
             drop_last=True,
             pin_memory=True,
-            collate_fn=self.collate_fn,
+            collate_fn=longest_length_padding,
         )
 
     def val_dataloader(self):
@@ -126,5 +127,5 @@ class TwitterDataModule(pl.LightningDataModule):
             num_workers=self.num_workers,
             drop_last=True,
             pin_memory=True,
-            collate_fn=self.collate_fn,
+            collate_fn=longest_length_padding,
         )
