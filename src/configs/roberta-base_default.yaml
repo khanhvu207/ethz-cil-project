@@ -1,0 +1,18 @@
+model:
+  pretrained: roberta-base
+  backbone_dropout: 0.0
+  backbone_layer_norm: 1e-7
+  monte_carlo_dropout: True
+  dropout_rate: 0.3
+train:
+  pretrained: roberta-base
+  data_dir: data/raw_train.csv
+  batch_size: 64
+  num_workers: 4
+  gpu_ids: [0, 1, 2, 3]
+  max_epochs: 5
+  lr: 5e-5
+  min_lr: 0
+  layerwise_lr_decay: 0.75
+  lr_warmup_pct: 0.06
+  weight_decay: 0.01
