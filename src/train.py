@@ -129,18 +129,18 @@ class LightningModel(pl.LightningModule):
         current_step = self.global_step
 
         lr = 0
-        # Linear warm up then cosine decay
         for i, g in enumerate(self.optimizer.param_groups):
             if current_step < self.warmup_steps:
                 g["lr"] = current_step / self.warmup_steps * self.default_lrs[i]
             else:
-                g["lr"] = cos_anneal(
-                    self.warmup_steps,
-                    self.total_steps,
-                    self.default_lrs[i],
-                    self.train_config["min_lr"],
-                    self.global_step,
-                )
+                # g["lr"] = cos_anneal(
+                #     self.warmup_steps,
+                #     self.total_steps,
+                #     self.default_lrs[i],
+                #     self.train_config["min_lr"],
+                #     self.global_step,
+                # )
+                g["lr"] = (self.total_steps - current_step) / (self.total_steps - warmup_steps) * self.default_lrs[i]
             lr = max(lr, g["lr"])
 
         self.log("train/lr", lr)

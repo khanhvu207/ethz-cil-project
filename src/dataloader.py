@@ -53,14 +53,12 @@ class TwitterDataset(Dataset):
             return {
                 "tweet": tweet,
                 "input_ids": enc["input_ids"].long(),
-                "token_type_ids": enc["token_type_ids"].long(),
                 "attention_mask": enc["attention_mask"].long(),
             }
         else:
             return {
                 "tweet": tweet,
                 "input_ids": enc["input_ids"].long(),
-                "token_type_ids": enc["token_type_ids"].long(),
                 "attention_mask": enc["attention_mask"].long(),
                 "label": torch.tensor(label, dtype=torch.float32),
             }
@@ -68,15 +66,11 @@ class TwitterDataset(Dataset):
 
 def longest_length_padding(batch):
     input_ids = [item["input_ids"].squeeze() for item in batch]
-    token_type_ids = [item["token_type_ids"].squeeze() for item in batch]
     attention_mask = [item["attention_mask"].squeeze() for item in batch]
     labels = [item["label"] for item in batch] if "label" in batch[0] else None
 
     input_ids = torch.nn.utils.rnn.pad_sequence(
         input_ids, batch_first=True, padding_value=0
-    )
-    token_type_ids = torch.nn.utils.rnn.pad_sequence(
-        token_type_ids, batch_first=True, padding_value=0
     )
     attention_mask = torch.nn.utils.rnn.pad_sequence(
         attention_mask, batch_first=True, padding_value=0
@@ -84,7 +78,6 @@ def longest_length_padding(batch):
 
     batch = {
         "input_ids": input_ids,
-        "token_type_ids": token_type_ids,
         "attention_mask": attention_mask,
         "label": torch.tensor(labels).unsqueeze(1) if labels else None,
     }

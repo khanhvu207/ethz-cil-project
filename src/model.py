@@ -10,7 +10,6 @@ class SentimentNet(nn.Module):
         pretrained,
         backbone_dropout=0.0,
         backbone_layer_norm=1e-7,
-        cls_hidden=512,
         monte_carlo_dropout=True,
         dropout_rate=0.3,
     ):
@@ -28,7 +27,6 @@ class SentimentNet(nn.Module):
         )
         self.feature_dim = self.backbone.config.hidden_size
         self.backbone.pooler = None
-
         self.layer_norm = nn.LayerNorm(self.feature_dim)
 
         if monte_carlo_dropout is True:
@@ -36,11 +34,7 @@ class SentimentNet(nn.Module):
         else:
             self.dropouts = nn.ModuleList([nn.Dropout(dropout_rate)])
 
-        self.classifier = nn.Sequential(
-            nn.Linear(self.feature_dim, cls_hidden),
-            nn.ReLU(),
-            nn.Linear(cls_hidden, 1),
-        )
+        self.classifier = nn.Linear(self.feature_dim, 1)
 
     def get_tweet_embeddings(self, input_ids, attention_mask):
         return self.backbone(
