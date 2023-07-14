@@ -140,7 +140,11 @@ class LightningModel(pl.LightningModule):
                 #     self.train_config["min_lr"],
                 #     self.global_step,
                 # )
-                g["lr"] = (self.total_steps - current_step) / (self.total_steps - warmup_steps) * self.default_lrs[i]
+                g["lr"] = (
+                    (self.total_steps - current_step)
+                    / (self.total_steps - warmup_steps)
+                    * self.default_lrs[i]
+                )
             lr = max(lr, g["lr"])
 
         self.log("train/lr", lr)
