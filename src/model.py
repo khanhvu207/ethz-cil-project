@@ -11,7 +11,7 @@ class SentimentNet(nn.Module):
         backbone_dropout=0.0,
         backbone_layer_norm=1e-7,
         monte_carlo_dropout=True,
-        dropout_rate=0.3,
+        dropout_rate=0.5,
     ):
         super().__init__()
         self.pretrained_config = AutoConfig.from_pretrained(pretrained)
@@ -26,34 +26,37 @@ class SentimentNet(nn.Module):
             pretrained, config=self.pretrained_config
         )
         self.feature_dim = self.backbone.config.hidden_size
-        self.backbone.pooler = None
-        self.layer_norm = nn.LayerNorm(self.feature_dim)
+        # self.backbone.pooler = None # Disable pooled_output
 
         if monte_carlo_dropout is True:
             self.dropouts = nn.ModuleList([nn.Dropout(dropout_rate) for _ in range(5)])
         else:
             self.dropouts = nn.ModuleList([nn.Dropout(dropout_rate)])
 
-        self.classifier = nn.Linear(self.feature_dim, 1)
-
-    def get_tweet_embeddings(self, input_ids, attention_mask):
-        return self.backbone(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-        ).hidden_states
+        # self.classifier = nn.Linear(self.feature_dim, 1)
+        self.classifier = nn.Sequential(
+            nn.Linear(self.feature_dim, 256),
+            nn.ReLU(),
+            nn.Linear(256, 1)
+        )
 
     def forward(self, input_ids, attention_mask):
-        layers = self.get_tweet_embeddings(input_ids, attention_mask)
-        last_layer = layers[-1]
-        cls_token = last_layer[:, 0, :]
-
-        cls_token = self.layer_norm(cls_token)
-
+        outs = self.backbone(
+            input_ids=input_ids,
+            attention_mask=attention_mask
+        )
+        pooled_output = outs["pooler_output"]
+        embedding = pooled_output
+        # layers = self.get_tweet_embeddings(input_ids, attention_mask)
+        # last_layer = layers[-1]
+        # cls_token = last_layer[:, 0, :]
+        # mean_pooled = last_layer.mean(dim=1)
+        # embedding = mean_pooled
         for i, dropout in enumerate(self.dropouts):
             if i == 0:
-                logit = self.classifier(dropout(cls_token))
+                logit = self.classifier(dropout(embedding))
             else:
-                logit += self.classifier(dropout(cls_token))
+                logit += self.classifier(dropout(embedding))
 
         logit /= len(self.dropouts)
         return logit

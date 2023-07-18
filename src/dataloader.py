@@ -11,7 +11,7 @@ from transformers import AutoTokenizer
 
 
 class TwitterDataset(Dataset):
-    def __init__(self, root, tokenizer, max_length=140, mode="train"):
+    def __init__(self, root, tokenizer, max_length=164, mode="train"):
         self.root = root
         self.tokenizer = tokenizer
         self.max_length = max_length

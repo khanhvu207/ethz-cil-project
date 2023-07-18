@@ -21,12 +21,12 @@ def main(**args):
     config = OmegaConf.load(args["config_path"])
     tokenizer = AutoTokenizer.from_pretrained(config["model"]["pretrained"])
     val_dataset = TwitterDataset(
-        "data/raw_train.csv",
+        config["train"]["data_dir"],
         tokenizer,
         mode="val",
     )
     test_dataset = TwitterDataset(
-        "data/test.csv",
+        config["predict"]["test_dir"],
         tokenizer,
         mode="test",
     )

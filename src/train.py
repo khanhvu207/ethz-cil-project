@@ -71,12 +71,12 @@ class LightningModel(pl.LightningModule):
 
     def configure_optimizers(self):
         # Layerwise learning rate decay for the Transformers backbone
-        no_weight_decay = ["bias", "LayerNorm.weight"]
+        no_weight_decay = ["bias", "LayerNorm.weight", "LayerNorm.bias"]
         params = list(self.model.named_parameters())
         is_backbone = lambda n: "backbone" in n and "pooler" not in n
         backbone_param_names = [n for n, p in params if is_backbone(n)]
         backbone_param_names.reverse()
-        backbone_lr = self.train_config["lr"]
+        backbone_lr = self.train_config["backbone_lr"]
         lr_decay = self.train_config["layerwise_lr_decay"]
         param_groups = []
         for idx, name in enumerate(backbone_param_names):
@@ -107,13 +107,16 @@ class LightningModel(pl.LightningModule):
             )
             backbone_lr *= lr_decay
 
-        # Classifier head
-        param_groups.append({"params": [p for n, p in params if not is_backbone(n)]})
+        param_groups.append(
+            {
+                "params": [p for n, p in params if not is_backbone(n)],
+                "lr": self.train_config["classifier_lr"],
+                "betas": (0.9, 0.999),
+            }
+        )
 
         self.optimizer = torch.optim.AdamW(
             param_groups,
-            lr=self.train_config["lr"],
-            betas=(0.9, 0.999),
         )
 
         self.default_lrs = []
@@ -142,7 +145,7 @@ class LightningModel(pl.LightningModule):
                 # )
                 g["lr"] = (
                     (self.total_steps - current_step)
-                    / (self.total_steps - warmup_steps)
+                    / (self.total_steps - self.warmup_steps)
                     * self.default_lrs[i]
                 )
             lr = max(lr, g["lr"])
