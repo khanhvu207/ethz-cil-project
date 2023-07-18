@@ -35,16 +35,11 @@ class SentimentNet(nn.Module):
 
         # self.classifier = nn.Linear(self.feature_dim, 1)
         self.classifier = nn.Sequential(
-            nn.Linear(self.feature_dim, 256),
-            nn.ReLU(),
-            nn.Linear(256, 1)
+            nn.Linear(self.feature_dim, 256), nn.ReLU(), nn.Linear(256, 1)
         )
 
     def forward(self, input_ids, attention_mask):
-        outs = self.backbone(
-            input_ids=input_ids,
-            attention_mask=attention_mask
-        )
+        outs = self.backbone(input_ids=input_ids, attention_mask=attention_mask)
         pooled_output = outs["pooler_output"]
         embedding = pooled_output
         # layers = self.get_tweet_embeddings(input_ids, attention_mask)

@@ -1,6 +1,7 @@
 import os
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 import scipy
 
 models = [
@@ -30,25 +31,29 @@ for preds_path in models:
         assert (val_labels == labels).all(), "Labels are not matched!"
     print("Loaded", preds_path)
 
+
 def cost_function(x):
     t = x[0]
     coeffs = x[1:]
     last = 1 - sum(coeffs)
     coeffs = np.append(coeffs, [last])
-    assert len(coeffs) == len(val_preds), "The number of coefficients is not equal to the number of models"
+    assert len(coeffs) == len(
+        val_preds
+    ), "The number of coefficients is not equal to the number of models"
 
     stacked_pred = np.zeros_like(val_preds[0])
     for i in range(len(val_preds)):
         stacked_pred += val_preds[i] * coeffs[i]
-    
+
     stacked_pred = (stacked_pred > t).astype(int)
     acc = (stacked_pred == val_labels).astype(float).mean()
     return -acc
 
+
 def main(**args):
     init = [0.5]
-    for i in range(len(val_preds)-1):
-        init.append(1. / len(val_preds))
+    for i in range(len(val_preds) - 1):
+        init.append(1.0 / len(val_preds))
 
     if "algo" not in args.keys():
         algo = "Powell"
@@ -61,23 +66,25 @@ def main(**args):
     t = result.x[0]
     coeffs = result.x[1:]
     last = 1 - sum(coeffs)
-    coeffs = np.append(coeffs, [last]) 
+    coeffs = np.append(coeffs, [last])
     print("Optimal decision threshold:", t)
     print("Optimal mixing coefficients:", coeffs)
-    
+
     stacked_pred = np.zeros_like(test_preds[0])
     for i in range(len(test_preds)):
         stacked_pred += test_preds[i] * coeffs[i]
-    
+
     stacked_pred = (stacked_pred > t).astype(int) * 2 - 1
     print("Test prediction statistics")
     print("Number of negative predictions:", (stacked_pred == -1).sum())
     print("Number of positive predictions:", (stacked_pred == 1).sum())
     submission = pd.DataFrame()
-    submission["Id"] = np.arange(1, stacked_pred.shape[0]+1)
+    submission["Id"] = np.arange(1, stacked_pred.shape[0] + 1)
     submission["Prediction"] = stacked_pred
     submission.to_csv("outputs/stacked_submission.csv", index=False)
 
+
 if __name__ == "__main__":
     import fire
+
     fire.Fire(main)
