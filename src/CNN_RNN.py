@@ -15,18 +15,18 @@ from absl import app, flags
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('train_path', 'data/train.csv', 'path to the training dataset')
-flags.DEFINE_string('val_path', 'data/validation.csv', 'path to the validation dataset')
+flags.DEFINE_string('train_path', 'data/raw_train.csv', 'path to the training dataset')
+flags.DEFINE_string('val_path', 'data/raw_train.csv', 'path to the validation dataset')
 flags.DEFINE_string('embedding_path', 'embedding/glove.twitter.27B.100d.txt', 'path to the embedding file')
-flags.DEFINE_string('partial', False, 'use partial data as testing')
+flags.DEFINE_boolean('partial', True, 'use partial data as testing')
 
 flags.DEFINE_integer('num_words', 10000, 'number of words for tokenizer')
 flags.DEFINE_integer('maxlen', 140, 'maximum number of words to keep in one tweet')
 flags.DEFINE_integer('emb_dim', 100, 'dim of the embedding')
 flags.DEFINE_string('model', 'CNN', 'model type to train')
 flags.DEFINE_float('learning_rate', 1e-4, 'learning rate')
-flags.DEFINE_integer('epoch', 1e4, 'number of epochs for training')
-flags.DEFINE_integer('batch_size', 1024, 'number of samples per batch')
+flags.DEFINE_integer('epoch', int(1e4), 'number of epochs for training')
+flags.DEFINE_integer('batch_size', 256, 'number of samples per batch')
 
 flags.DEFINE_string('save_dir', '/results/', 'the directory to save the training history')
 
@@ -42,12 +42,14 @@ def load_csv_and_embedding(train_path, validation_path, embedding_path, emb_dim,
     val_df = pd.read_csv(validation_path)
     val_tweets = val_df["tweet"].values
     val_tweets = np.array(["I" if tweet == "" else tweet for tweet in val_tweets])
-    
+    val_labels = val_df["label"].values
+
+
     np.random.seed(1)  # Reproducibility!
     # take partial data for testing purpose
     if partial == True:
         train_shuffled_indices = np.random.permutation(len(train_tweets))
-        train_partial_idx = int(0.01 * len(train_tweets))
+        train_partial_idx = int(0.005 * len(train_tweets))
         
         train_partial_indices = train_shuffled_indices[:train_partial_idx]
         
@@ -55,7 +57,7 @@ def load_csv_and_embedding(train_path, validation_path, embedding_path, emb_dim,
         train_labels = train_labels[train_partial_indices]
 
         val_shuffled_indices = np.random.permutation(len(val_tweets))
-        val_partial_idx = int(0.01*len(val_tweets))
+        val_partial_idx = int(0.0005*len(val_tweets))
 
         val_partial_indices = val_shuffled_indices[:val_partial_idx]
 
@@ -73,7 +75,7 @@ def load_csv_and_embedding(train_path, validation_path, embedding_path, emb_dim,
     print("x_val shape", x_val.shape)
     print("y_val shape", y_val.shape)
     tokenizer = Tokenizer(num_words)
-    tokenizer.fit_on_texts(tweets)
+    tokenizer.fit_on_texts(train_tweets)
     
     x_train = tokenizer.texts_to_sequences(x_train) 
     x_train = pad_sequences(x_train, padding='post', maxlen=maxlen)
@@ -126,7 +128,7 @@ class CNN_classifier():
 		self.maxlen = maxlen
 		self.trainable = trainable
 
-		self.model = self.create_model()
+		self.model = self.create_model(learning_rate)
 
 	def create_model(self, learning_rate):
 		model= Sequential()
@@ -145,7 +147,7 @@ class CNN_classifier():
 
 
 def main(_):
-	x_train, y_train, x_val, y_val, emb_mat = load_csv_and_embedding(FLAGS.train_path, FLAGS.validation_path, FLAGS.embedding_path, FLAGS.emb_dim, FLAGS.num_words, FLAGS.maxlen, FLAGS.partial)
+	x_train, y_train, x_val, y_val, emb_mat = load_csv_and_embedding(FLAGS.train_path, FLAGS.val_path, FLAGS.embedding_path, FLAGS.emb_dim, FLAGS.num_words, FLAGS.maxlen, FLAGS.partial)
 
 	if 	FLAGS.model == 'CNN':
 		model = CNN_classifier(emb_mat, FLAGS.maxlen).model
