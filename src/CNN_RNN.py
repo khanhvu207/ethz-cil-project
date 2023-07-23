@@ -23,7 +23,7 @@ flags.DEFINE_boolean('partial', True, 'use partial data as testing')
 flags.DEFINE_integer('num_words', 10000, 'number of words for tokenizer')
 flags.DEFINE_integer('maxlen', 140, 'maximum number of words to keep in one tweet')
 flags.DEFINE_integer('emb_dim', 100, 'dim of the embedding')
-flags.DEFINE_string('model', 'CNN', 'model type to train')
+flags.DEFINE_string('model', 'RNN', 'model type to train')
 flags.DEFINE_float('learning_rate', 1e-4, 'learning rate')
 flags.DEFINE_integer('epoch', int(1e4), 'number of epochs for training')
 flags.DEFINE_integer('batch_size', 256, 'number of samples per batch')
@@ -110,7 +110,7 @@ class RNN_classifier():
 
 	def create_model(self, learning_rate):
 		model= Sequential()
-		model.add(Embedding(input_dim=self.vocab, output_dim=self.emb_dim,weights=[emb_mat], input_length=self.maxlen, trainable=self.trainable))
+		model.add(Embedding(input_dim=self.vocab, output_dim=self.emb_dim,weights=[self.emb_mat], input_length=self.maxlen, trainable=self.trainable))
 		model.add(MaxPool1D())
 		model.add(LSTM(100, dropout=0.2, recurrent_dropout=0.2, return_sequences = False))
 		model.add(Dense(16,activation="relu"))
