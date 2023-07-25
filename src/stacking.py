@@ -11,6 +11,7 @@ models = [
     "roberta-base_default/roberta-base_ep=10",
     "roberta-base_default/roberta-base_pooler",
     "roberta-large_default/roberta-large",
+    "roberta-large_default/roberta-large_wd=0.3",
 ]
 val_preds = []
 test_preds = []

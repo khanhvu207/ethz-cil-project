@@ -42,11 +42,6 @@ class SentimentNet(nn.Module):
         outs = self.backbone(input_ids=input_ids, attention_mask=attention_mask)
         pooled_output = outs["pooler_output"]
         embedding = pooled_output
-        # layers = self.get_tweet_embeddings(input_ids, attention_mask)
-        # last_layer = layers[-1]
-        # cls_token = last_layer[:, 0, :]
-        # mean_pooled = last_layer.mean(dim=1)
-        # embedding = mean_pooled
         for i, dropout in enumerate(self.dropouts):
             if i == 0:
                 logit = self.classifier(dropout(embedding))

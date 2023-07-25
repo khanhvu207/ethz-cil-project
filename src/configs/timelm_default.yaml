@@ -1,11 +1,11 @@
 model:
-  pretrained: roberta-large
+  pretrained: cardiffnlp/twitter-roberta-base-sentiment-latest
   backbone_dropout: 0.0
   backbone_layer_norm: 1e-7
   monte_carlo_dropout: True
   dropout_rate: 0.5
 train:
-  pretrained: roberta-large
+  pretrained: cardiffnlp/twitter-roberta-base-sentiment-latest
   data_dir: data/raw_train.csv
   batch_size: 64
   num_workers: 4
