@@ -4,9 +4,10 @@ model:
   backbone_layer_norm: 1e-7
   monte_carlo_dropout: True
   dropout_rate: 0.5
+  classifier_type: mlp
 train:
   pretrained: cardiffnlp/twitter-roberta-base-sentiment-latest
-  data_dir: data/raw_train.csv
+  dataset: raw
   batch_size: 64
   num_workers: 4
   gpu_ids: [0, 1, 2, 3]
@@ -17,5 +18,3 @@ train:
   layerwise_lr_decay: 0.9
   lr_warmup_pct: 0.06
   weight_decay: 0.3
-predict:
-  test_dir: data/test.csv

@@ -50,6 +50,11 @@ outputs/timelm_default/${RUN_ID}/${RUN_ID}.ckpt:
 		--debug=${DEBUG} \
 		--config_path=configs/timelm_default.yaml
 
+outputs/timelm_attention/${RUN_ID}/${RUN_ID}.ckpt:
+	python train.py --run_id=${RUN_ID} \
+		--debug=${DEBUG} \
+		--config_path=configs/timelm_attention.yaml
+
 outputs/albert-base_attention/${RUN_ID}/${RUN_ID}.ckpt:
 	python train.py --run_id=${RUN_ID} \
 		--debug=${DEBUG} \
@@ -94,6 +99,11 @@ outputs/timelm_default/${RUN_ID}/submission.csv: outputs/timelm_default/${RUN_ID
 	python predict.py --run_id=${RUN_ID} \
 		--ckpt_path=$< \
 		--config_path=configs/timelm_default.yaml
+
+outputs/timelm_attention/${RUN_ID}/submission.csv: outputs/timelm_attention/${RUN_ID}/${RUN_ID}.ckpt
+	python predict.py --run_id=${RUN_ID} \
+		--ckpt_path=$< \
+		--config_path=configs/timelm_attention.yaml
 
 outputs/albert-base_attention/${RUN_ID}/submission.csv: outputs/albert-base_attention/${RUN_ID}/${RUN_ID}.ckpt
 	python predict.py --run_id=${RUN_ID} \
