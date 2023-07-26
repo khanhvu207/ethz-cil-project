@@ -30,7 +30,9 @@ class SentimentNet(nn.Module):
         self.classifier_type = classifier_type
         if self.classifier_type == "mlp":
             if monte_carlo_dropout is True:
-                self.dropouts = nn.ModuleList([nn.Dropout(dropout_rate) for _ in range(5)])
+                self.dropouts = nn.ModuleList(
+                    [nn.Dropout(dropout_rate) for _ in range(5)]
+                )
             else:
                 self.dropouts = nn.ModuleList([nn.Dropout(dropout_rate)])
 
@@ -38,16 +40,14 @@ class SentimentNet(nn.Module):
                 nn.Linear(self.feature_dim, 256), nn.ReLU(), nn.Linear(256, 1)
             )
         elif self.classifier_type == "attention":
-            self.backbone.pooler = None # Disable pooled_output
+            self.backbone.pooler = None  # Disable pooled_output
             self.attention = nn.Sequential(
                 nn.Linear(self.feature_dim * 4, 512),
                 nn.Tanh(),
                 nn.Linear(512, 1),
-                nn.Softmax(dim=1)
+                nn.Softmax(dim=1),
             )
-            self.classifier = nn.Sequential(
-                nn.Linear(self.feature_dim * 4, 1)
-            )
+            self.classifier = nn.Sequential(nn.Linear(self.feature_dim * 4, 1))
 
     def forward(self, input_ids, attention_mask):
         outs = self.backbone(input_ids=input_ids, attention_mask=attention_mask)

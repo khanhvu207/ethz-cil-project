@@ -5,8 +5,8 @@ import pandas as pd
 import scipy
 
 models = [
-   "bert_attention/bert_attention",
-   "roberta-base_attention/roberta-base_attention", 
+    "bert_attention/bert_attention",
+    "roberta-base_attention/roberta-base_attention",
 ]
 
 val_preds = []

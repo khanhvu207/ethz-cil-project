@@ -1,6 +1,8 @@
 import os
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+
 
 def train_val_split(csv_name, ratio=0.9):
     df = pd.read_csv(f"data/{csv_name}_train.csv")
@@ -8,10 +10,14 @@ def train_val_split(csv_name, ratio=0.9):
     indices = np.arange(len(df))
     rng = np.random.default_rng(42)
     rng.shuffle(indices)
-    train_indices = indices[:int(ratio * len(indices))]
-    val_indices = indices[int(ratio * len(indices)):]
-    sorted_train_indices = train_indices[np.argsort(np.array([len(tweets[i]) for i in train_indices]))]
-    sorted_val_indices = val_indices[np.argsort(np.array([len(tweets[i]) for i in val_indices]))]
+    train_indices = indices[: int(ratio * len(indices))]
+    val_indices = indices[int(ratio * len(indices)) :]
+    sorted_train_indices = train_indices[
+        np.argsort(np.array([len(tweets[i]) for i in train_indices]))
+    ]
+    sorted_val_indices = val_indices[
+        np.argsort(np.array([len(tweets[i]) for i in val_indices]))
+    ]
     train_df = df.iloc[sorted_train_indices]
     val_df = df.iloc[sorted_val_indices]
     test_df = pd.read_csv(f"data/{csv_name}_test.csv")
@@ -26,9 +32,9 @@ if __name__ == "__main__":
         "raw",
         "cleaned",
         "hashtag",
-        "cleaned_lemmatized", 
+        "cleaned_lemmatized",
         "cleaned_spelling_corrected",
-        "cleaned_stopword_removed"
+        "cleaned_stopword_removed",
     ]
     for name in datasets:
         train_val_split(name)
