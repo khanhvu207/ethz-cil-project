@@ -19,14 +19,15 @@ def main(**args):
     run_id = args["run_id"]
     ckpt_path = args["ckpt_path"]
     config = OmegaConf.load(args["config_path"])
+    dataset = config["train"]["dataset"]
     tokenizer = AutoTokenizer.from_pretrained(config["model"]["pretrained"])
     val_dataset = TwitterDataset(
-        config["train"]["data_dir"],
+        dataset,
         tokenizer,
         mode="val",
     )
     test_dataset = TwitterDataset(
-        config["predict"]["test_dir"],
+        dataset,
         tokenizer,
         mode="test",
     )

@@ -11,38 +11,22 @@ from transformers import AutoTokenizer
 
 
 class TwitterDataset(Dataset):
-    def __init__(self, root, tokenizer, max_length=164, mode="train"):
-        self.root = root
+    def __init__(self, dataset, tokenizer, max_length=164, mode="train"):
+        self.dataset = dataset
         self.tokenizer = tokenizer
         self.max_length = max_length
         self.mode = mode
-        self.df = pd.read_csv(root)
-        self.tweets = [re.sub(r"\s{2,}", " ", tweet) for tweet in self.df["tweet"]]
+        self.data_path = f"data/{mode}/{dataset}.csv"
+        self.df = pd.read_csv(self.data_path)
+        self.tweets = self.df["tweet"]
         self.labels = self.df["label"] if mode != "test" else None
-        self.indices = np.arange(len(self.df))
-
-        # When mode="train" or "val", we sort the tweets by their length so that it makes the batching process more efficient
-        # When mode="test", don't do anything! The ordering must be preserved!
-        if mode != "test":
-            rng = np.random.default_rng(42)
-            rng.shuffle(self.indices)
-            if self.mode == "train":
-                self.indices = self.indices[: int(0.9 * len(self.indices))]
-
-            elif self.mode == "val":
-                self.indices = self.indices[int(0.9 * len(self.indices)) :]
-
-            # Sort by the tweet's length to make batching faster
-            tweet_lengths = np.array([len(self.tweets[i]) for i in self.indices])
-            sorted_indices = np.argsort(tweet_lengths)
-            self.indices = self.indices[sorted_indices]
 
     def __len__(self):
-        return len(self.indices)
+        return len(self.df)
 
     def __getitem__(self, idx):
-        tweet = self.tweets[self.indices[idx]]
-        label = self.labels[self.indices[idx]] if self.mode != "test" else None
+        tweet = self.tweets[idx]
+        label = self.labels[idx] if self.mode != "test" else None
         enc = self.tokenizer.encode_plus(
             tweet,
             truncation=True,
@@ -89,7 +73,7 @@ class TwitterDataModule(pl.LightningDataModule):
         super().__init__()
         self.config = config
         self.pretrained = config["pretrained"]
-        self.data_dir = config["data_dir"]
+        self.dataset = config["dataset"]
         self.batch_size = config["batch_size"]
         self.num_workers = config["num_workers"]
         self.num_gpus = len(config["gpu_ids"])
@@ -97,12 +81,12 @@ class TwitterDataModule(pl.LightningDataModule):
     def setup(self, stage=None):
         tokenizer = AutoTokenizer.from_pretrained(self.pretrained)
         self.train_data = TwitterDataset(
-            root=self.data_dir,
+            self.dataset,
             tokenizer=tokenizer,
             mode="train",
         )
         self.val_data = TwitterDataset(
-            root=self.data_dir,
+            self.dataset,
             tokenizer=tokenizer,
             mode="val",
         )

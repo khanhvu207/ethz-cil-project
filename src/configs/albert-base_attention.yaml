@@ -1,16 +1,16 @@
 model:
-  pretrained: bert-base-uncased
+  pretrained: albert-base-v2
   backbone_dropout: 0.0
   backbone_layer_norm: 1e-7
   monte_carlo_dropout: True
   dropout_rate: 0.5
-  classifier_type: mlp
+  classifier_type: attention
 train:
-  pretrained: bert-base-uncased
+  pretrained: albert-base-v2
   dataset: raw
   batch_size: 64
   num_workers: 4
-  gpu_ids: [0, 1, 2, 3]
+  gpu_ids: [0, 1]
   max_epochs: 5
   classifier_lr: 7e-5
   backbone_lr: 5e-5

@@ -5,14 +5,10 @@ import pandas as pd
 import scipy
 
 models = [
-    "bert_default/bert_default",
-    "bert_default/bert_mcdo",
-    "roberta-base_default/roberta-base",
-    "roberta-base_default/roberta-base_ep=10",
-    "roberta-base_default/roberta-base_pooler",
-    "roberta-large_default/roberta-large",
-    "roberta-large_default/roberta-large_wd=0.3",
+   "bert_attention/bert_attention",
+   "roberta-base_attention/roberta-base_attention", 
 ]
+
 val_preds = []
 test_preds = []
 val_labels = None

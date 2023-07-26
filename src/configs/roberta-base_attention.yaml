@@ -1,12 +1,12 @@
 model:
-  pretrained: bert-base-uncased
+  pretrained: roberta-base
   backbone_dropout: 0.0
   backbone_layer_norm: 1e-7
   monte_carlo_dropout: True
   dropout_rate: 0.5
-  classifier_type: mlp
+  classifier_type: attention
 train:
-  pretrained: bert-base-uncased
+  pretrained: roberta-base
   dataset: raw
   batch_size: 64
   num_workers: 4
