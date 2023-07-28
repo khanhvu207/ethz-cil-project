@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.nn.modules.loss import _WeightedLoss
 import wandb
 from omegaconf import OmegaConf
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -18,6 +19,32 @@ from model import SentimentNet
 from utils import cos_anneal
 
 
+class SmoothBCEwLogits(_WeightedLoss):
+    def __init__(self, weight=None, reduction='mean', smoothing=0.0):
+        super().__init__(weight=weight, reduction=reduction)
+        self.smoothing = smoothing
+        self.weight = weight
+        self.reduction = reduction
+
+    @staticmethod
+    def _smooth(targets:torch.Tensor, n_labels:int, smoothing=0.0):
+        assert 0 <= smoothing < 1
+        with torch.no_grad():
+            targets = targets * (1.0 - smoothing) + 0.5 * smoothing
+        return targets
+
+    def forward(self, inputs, targets):
+        targets = SmoothBCEwLogits._smooth(targets, inputs.size(-1),
+            self.smoothing)
+        loss = F.binary_cross_entropy_with_logits(inputs, targets,self.weight)
+
+        if  self.reduction == 'sum':
+            loss = loss.sum()
+        elif  self.reduction == 'mean':
+            loss = loss.mean()
+
+        return loss
+
 class LightningModel(pl.LightningModule):
     def __init__(self, **config):
         super().__init__()
@@ -27,9 +54,10 @@ class LightningModel(pl.LightningModule):
         self.model_config = config["model"]
         self.model = SentimentNet(**self.model_config)
 
-        self.loss_fn = nn.BCEWithLogitsLoss(
-            reduction="mean"
-        )  # Numerically stable than BCELoss
+        # self.loss_fn = nn.BCEWithLogitsLoss(
+        #     reduction="mean"
+        # )  # Numerically stable than BCELoss
+        self.loss_fn = SmoothBCEwLogits(smoothing=0.1)
 
     def count_parameters(self):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)

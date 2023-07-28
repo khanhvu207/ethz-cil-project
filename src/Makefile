@@ -65,6 +65,16 @@ outputs/albert-large_attention/${RUN_ID}/${RUN_ID}.ckpt:
 		--debug=${DEBUG} \
 		--config_path=configs/albert-large_attention.yaml
 
+outputs/albert-xlarge_attention/${RUN_ID}/${RUN_ID}.ckpt:
+	python train.py --run_id=${RUN_ID} \
+		--debug=${DEBUG} \
+		--config_path=configs/albert-xlarge_attention.yaml
+
+outputs/xlm-roberta-base_attention/${RUN_ID}/${RUN_ID}.ckpt:
+	python train.py --run_id=${RUN_ID} \
+		--debug=${DEBUG} \
+		--config_path=configs/xlm-roberta-base_attention.yaml
+
 outputs/bert_default/${RUN_ID}/submission.csv: outputs/bert_default/${RUN_ID}/${RUN_ID}.ckpt
 	python predict.py --run_id=${RUN_ID} \
 		--ckpt_path=$< \
@@ -115,6 +125,16 @@ outputs/albert-large_attention/${RUN_ID}/submission.csv: outputs/albert-large_at
 		--ckpt_path=$< \
 		--config_path=configs/albert-large_attention.yaml
 
+outputs/albert-xlarge_attention/${RUN_ID}/submission.csv: outputs/albert-xlarge_attention/${RUN_ID}/${RUN_ID}.ckpt
+	python predict.py --run_id=${RUN_ID} \
+		--ckpt_path=$< \
+		--config_path=configs/albert-xlarge_attention.yaml
+
+outputs/xlm-roberta-base_attention/${RUN_ID}/submission.csv: outputs/xlm-roberta-base_attention/${RUN_ID}/${RUN_ID}.ckpt
+	python predict.py --run_id=${RUN_ID} \
+		--ckpt_path=$< \
+		--config_path=configs/xlm-roberta-base_attention.yaml
+
 bert_%: outputs/bert_%/${RUN_ID}/submission.csv
 	:
 
@@ -131,4 +151,10 @@ albert-base_%: outputs/albert-base_%/${RUN_ID}/submission.csv
 	:
 
 albert-large_%: outputs/albert-large_%/${RUN_ID}/submission.csv
+	:
+
+albert-xlarge_%: outputs/albert-xlarge_%/${RUN_ID}/submission.csv
+	:
+
+xlm-roberta-base_%: outputs/xlm-roberta-base_%/${RUN_ID}/submission.csv
 	:
