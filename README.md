@@ -25,10 +25,10 @@
 First you have to make sure that you have all dependencies in place.
 The simplest way to do so, is to use [anaconda](https://www.anaconda.com/). 
 
-You can create an anaconda environment called `ML`.
+You can create an anaconda environment called `DNN`.
 ```bash
 conda env create -f environment.yaml
-conda activate ML
+conda activate DNN
 ```
 
 ### Example training code
