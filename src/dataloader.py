@@ -25,7 +25,9 @@ class TwitterDataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, idx):
-        tweet = self.tweets[idx]
+        tweet = str(self.tweets[idx])
+        if len(tweet) == 0:
+            tweet = "."
         label = self.labels[idx] if self.mode != "test" else None
         enc = self.tokenizer.encode_plus(
             tweet,

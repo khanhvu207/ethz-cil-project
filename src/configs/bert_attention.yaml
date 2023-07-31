@@ -7,7 +7,7 @@ model:
   classifier_type: attention
 train:
   pretrained: bert-base-uncased
-  dataset: raw
+  dataset: cleaned_stopword_removed
   batch_size: 64
   num_workers: 4
   gpu_ids: [0, 1, 2, 3]

@@ -12,6 +12,7 @@ dependencies:
   - pip:
     - pytorch-lightning>=2.0.0
     - transformers>=4.30.0
+    - sentencepiece
     - numpy>=1.24.0
     - pandas
     - scikit-learn>=1.2.0

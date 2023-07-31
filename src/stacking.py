@@ -19,8 +19,8 @@ models = [
     "albert-xlarge_attention/albert-xlarge_attention",
     "roberta-base_attention/roberta-base_attention",
     "roberta-large_attention/roberta-large_attention",
-    "roberta-large_attention/roberta-large_attention_ls0.1",
     "timelm_attention/timelm_attention",
+    "deberta-large_attention/deberta-large_attention",
 ]
 
 val_preds = []
@@ -46,11 +46,11 @@ def main(**args):
     X = np.asarray(val_preds).T
     X_test = np.asarray(test_preds).T
     y = np.asarray(val_labels)
-    # model = LogisticRegression(C=5.0, random_state=42)
     model = RidgeClassifier(alpha=10, random_state=42)
     scores = cross_val_score(model, X, y, cv=5)
     print("Cross-validation score:", np.mean(scores))
     model = model.fit(X, y)
+    print("Mixing weights:", model.coef_)
     
     stacked_pred = model.predict(X_test)
     stacked_pred = stacked_pred.astype(int) * 2 - 1

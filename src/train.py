@@ -54,10 +54,10 @@ class LightningModel(pl.LightningModule):
         self.model_config = config["model"]
         self.model = SentimentNet(**self.model_config)
 
-        # self.loss_fn = nn.BCEWithLogitsLoss(
-        #     reduction="mean"
-        # )  # Numerically stable than BCELoss
-        self.loss_fn = SmoothBCEwLogits(smoothing=0.1)
+        self.loss_fn = nn.BCEWithLogitsLoss(
+            reduction="mean"
+        )  # Numerically stable than BCELoss
+        # self.loss_fn = SmoothBCEwLogits(smoothing=0.1)
 
     def count_parameters(self):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
@@ -210,6 +210,7 @@ def main(**args):
     data = TwitterDataModule(**config["train"])
     model = LightningModel(**config)
     print(model)
+    # raise Exception
 
     callback_list = [checkpoint_callback] if not debug else []
 
