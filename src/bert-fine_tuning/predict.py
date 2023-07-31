@@ -7,12 +7,11 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from dataloader import TwitterDataset, longest_length_padding
 from omegaconf import OmegaConf
 from torch.utils.data import DataLoader, Dataset
-from transformers import AutoTokenizer
-
-from dataloader import TwitterDataset, longest_length_padding
 from train import LightningModel
+from transformers import AutoTokenizer
 
 
 def main(**args):

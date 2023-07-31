@@ -7,6 +7,10 @@ $ conda create env -f environment.yaml
 $ conda activate twitter
 ```
 
+For our experiment, we use 4 A5000 GPUs
+```bash
+```
+
 ## 2. Run single model experiments
 To fine-tune one of the eight available BERT variants, for instance BERT with the 2-layer MLP classification head, run the following command:
 

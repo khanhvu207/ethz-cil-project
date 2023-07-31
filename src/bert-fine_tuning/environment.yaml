@@ -25,7 +25,7 @@ dependencies:
     - ipykernel
     - clean-text[gpl]
     - textblob
-    - black
+    - black[jupyter]
     - isort
     - flake8
     - mypy

@@ -3,14 +3,12 @@ import os
 import numpy as np
 import pandas as pd
 import scipy
-from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import (ExtraTreesClassifier,
+                              HistGradientBoostingClassifier,
+                              StackingClassifier)
 from sklearn.linear_model import LogisticRegression, RidgeClassifier
-from sklearn.ensemble import (
-    ExtraTreesClassifier,
-    HistGradientBoostingClassifier,
-    StackingClassifier,
-)
 from sklearn.model_selection import cross_val_score
+from sklearn.neural_network import MLPClassifier
 
 models = [
     "bert_attention/bert_attention",
@@ -42,6 +40,7 @@ for preds_path in models:
         assert (val_labels == labels).all(), "Labels are not matched!"
     print("Loaded", preds_path)
 
+
 def main(**args):
     X = np.asarray(val_preds).T
     X_test = np.asarray(test_preds).T
@@ -51,7 +50,7 @@ def main(**args):
     print("Cross-validation score:", np.mean(scores))
     model = model.fit(X, y)
     print("Mixing weights:", model.coef_)
-    
+
     stacked_pred = model.predict(X_test)
     stacked_pred = stacked_pred.astype(int) * 2 - 1
     print("Test prediction statistics")
@@ -61,6 +60,7 @@ def main(**args):
     submission["Id"] = np.arange(1, stacked_pred.shape[0] + 1)
     submission["Prediction"] = stacked_pred
     submission.to_csv("outputs/stacked_submission.csv", index=False)
+
 
 if __name__ == "__main__":
     import fire

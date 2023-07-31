@@ -6,44 +6,43 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.modules.loss import _WeightedLoss
 import wandb
+from dataloader import TwitterDataModule
+from model import SentimentNet
 from omegaconf import OmegaConf
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
+from torch.nn.modules.loss import _WeightedLoss
 from torch.utils.data import DataLoader, Dataset
 from transformers import AutoTokenizer
-
-from dataloader import TwitterDataModule
-from model import SentimentNet
 from utils import cos_anneal
 
 
 class SmoothBCEwLogits(_WeightedLoss):
-    def __init__(self, weight=None, reduction='mean', smoothing=0.0):
+    def __init__(self, weight=None, reduction="mean", smoothing=0.0):
         super().__init__(weight=weight, reduction=reduction)
         self.smoothing = smoothing
         self.weight = weight
         self.reduction = reduction
 
     @staticmethod
-    def _smooth(targets:torch.Tensor, n_labels:int, smoothing=0.0):
+    def _smooth(targets: torch.Tensor, n_labels: int, smoothing=0.0):
         assert 0 <= smoothing < 1
         with torch.no_grad():
             targets = targets * (1.0 - smoothing) + 0.5 * smoothing
         return targets
 
     def forward(self, inputs, targets):
-        targets = SmoothBCEwLogits._smooth(targets, inputs.size(-1),
-            self.smoothing)
-        loss = F.binary_cross_entropy_with_logits(inputs, targets,self.weight)
+        targets = SmoothBCEwLogits._smooth(targets, inputs.size(-1), self.smoothing)
+        loss = F.binary_cross_entropy_with_logits(inputs, targets, self.weight)
 
-        if  self.reduction == 'sum':
+        if self.reduction == "sum":
             loss = loss.sum()
-        elif  self.reduction == 'mean':
+        elif self.reduction == "mean":
             loss = loss.mean()
 
         return loss
+
 
 class LightningModel(pl.LightningModule):
     def __init__(self, **config):
