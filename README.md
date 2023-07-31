@@ -41,5 +41,17 @@ The GloVe Embedding can be downloaded [here](https://www.kaggle.com/datasets/ber
 
 ## Run
 
-python3 DNN_classifier.py
+CNN
+```bash
+python3 DNN_classifier.py --model=CNN --partial=False --epoch=100
+```
 
+RNN
+```bash
+python3 DNN_classifier.py --model=RNN --partial=False --epoch=300
+```
+
+MLP
+```bash
+python3 DNN_classifier.py --model=MLP --partial=False --epoch=100
+```
