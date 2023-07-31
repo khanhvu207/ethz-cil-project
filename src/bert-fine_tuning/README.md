@@ -7,6 +7,8 @@ $ conda create env -f environment.yaml
 $ conda activate twitter
 ```
 
+To get the data, download this [zip file](https://drive.google.com/file/d/1YNJAKRipuUkPN9yxvgkK9CMYcg6Ou_kQ/view?usp=sharing) and extract everything to the `data/` folder.
+
 For our experiment, we use 4 A5000 GPUs
 ```bash
 +-----------------------------------------------------------------------------+
