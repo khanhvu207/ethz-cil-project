@@ -11,13 +11,10 @@
       <a href="#data">Data</a>
     </li>
     <li>
-      <a href="#glove_embedding">GloVe Embedding</a>
+      <a href="#glove-embedding">GloVe Embedding</a>
     </li>
     <li>
-      <a href="#deep-learning-baselines">Deep Learning Baselines</a>
-    </li>
-    <li>
-      <a href="#bert-finetuning">BERT Finetuning</a>
+      <a href="#run">Run</a>
     </li>
     <li>
       <a href="#contact">Contact</a>
