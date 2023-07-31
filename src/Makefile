@@ -1,4 +1,4 @@
-.PHONY: data_analysis data_cleaning bert roberta-base roberta-large timelm
+.PHONY: data_analysis data_cleaning plotting bert roberta-base roberta-large timelm
 
 python:= /var/scratch/dknguyen/anaconda3/envs/twitter/bin/python3.10
 jupyter := python -m jupyter
@@ -9,8 +9,12 @@ notebooks/data_analysis.html:
 notebooks/data_cleaning.html:
 	jupyter nbconvert --to html --execute notebooks/data_cleaning.ipynb
 
+notebooks/plotting.html:
+	jupyter nbconvert --to html --execute notebooks/plotting.ipynb
+
 data_analysis: notebooks/data_analysis.html
 data_cleaning: notebooks/data_cleaning.html
+plotting: notebooks/plotting.html
 
 DEBUG ?= True
 RUN_ID ?= 
