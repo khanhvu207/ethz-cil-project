@@ -4,7 +4,7 @@
 
 ### Install dependencies
 
-conda 
+conda env create -f environment.yml
 
 ### Example training code
 
