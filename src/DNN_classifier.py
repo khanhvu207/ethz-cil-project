@@ -16,9 +16,9 @@ from absl import app, flags
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('train_path', 'data/raw_train.csv', 'path to the training dataset')
-flags.DEFINE_string('val_path', 'data/raw_train.csv', 'path to the validation dataset')
-flags.DEFINE_string('embedding_path', 'embedding/glove.twitter.27B.100d.txt', 'path to the embedding file')
+flags.DEFINE_string('train_path', 'data/train/raw.csv', 'path to the training dataset')
+flags.DEFINE_string('val_path', 'data/val/raw.csv', 'path to the validation dataset')
+flags.DEFINE_string('embedding_path', 'DNN/embedding/glove.twitter.27B.100d.txt', 'path to the embedding file')
 flags.DEFINE_boolean('partial', True, 'use partial data as testing')
 
 flags.DEFINE_integer('num_words', 10000, 'number of words for tokenizer')
@@ -26,7 +26,7 @@ flags.DEFINE_integer('maxlen', 164, 'maximum number of words to keep in one twee
 flags.DEFINE_integer('emb_dim', 100, 'dim of the embedding')
 flags.DEFINE_string('model', 'CNN', 'model type to train')
 flags.DEFINE_float('learning_rate', 1e-4, 'learning rate')
-flags.DEFINE_integer('epoch', int(1e4), 'number of epochs for training')
+flags.DEFINE_integer('epoch', int(1e2), 'number of epochs for training')
 flags.DEFINE_integer('batch_size', 256, 'number of samples per batch')
 
 flags.DEFINE_string('save_dir', '/results/', 'the directory to save the training history')
