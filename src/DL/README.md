@@ -56,7 +56,7 @@ MLP
 python3 DNN_classifier.py --model=MLP --partial=False --epoch=100
 ```
 
-To plot the results, follow the notebook load_and_plot.ipynb in [src/notebooks/](src/notebooks/).
+To plot the results, follow the notebook load_and_plot.ipynb in [/src/notebooks/](/src/notebooks/).
 
 ## Contact
 Contact [Changling Li](mailto:lichan@student.ethz.ch) for questions, comments and reporting bugs.
