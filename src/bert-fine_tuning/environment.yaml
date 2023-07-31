@@ -10,18 +10,22 @@ dependencies:
   - pytorch=2.0.0
   - pytorch-cuda=11.7
   - pip:
+    - pytorch-lightning>=2.0.0
     - transformers>=4.30.0
+    - sentencepiece
     - numpy>=1.24.0
     - pandas
     - scikit-learn>=1.2.0
     - jupyterlab
     - seaborn
     - wandb
+    - omegaconf
+    - fire
     - kaggle
     - ipykernel
     - clean-text[gpl]
     - textblob
-    - black
+    - black[jupyter]
     - isort
     - flake8
     - mypy

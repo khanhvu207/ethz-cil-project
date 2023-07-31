@@ -4,3 +4,5 @@ data
 startup-files
 *.html
 *.zip
+src/outputs
+__pycache__/
