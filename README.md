@@ -19,9 +19,10 @@
 </p>
 <br>
 
-<center>
+
+<p align="center">
 <img src="assets/front-1.png" alt="report-front" width="500">
-</center>
+</p>
 
 <br>
 
