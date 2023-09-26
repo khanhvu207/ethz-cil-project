@@ -19,7 +19,9 @@
 </p>
 <br>
 
-
+<center>
+<img src="assets/front-1.png" alt="report-front" width="500">
+</center>
 
 <br>
 
@@ -48,9 +50,10 @@
   </ol>
 </details>
 
-
 ## Introduction
 Large language models have revolutionized various fields, showcasing their capacity for understanding human natural languages. Tweet sentiment analysis is a challenging and valuable task within its context, given its direct relevance to social media analyses. In this report, we delve into a method utilizing BERT (Bidirectional Encoder Representations from Transformers) ensemble, showcasing its efficiency in achieving commendable performance in tweet sentiment analysis compared to several standard baselines. We conduct a comprehensive suite of experiments, with discussions on the critical role of data preprocessing in improving model performance. Our findings provide insights into the development of more robust and efficient sentiment analysis models.
+
+See the [full report](final_report.pdf).
 
 We include baseline and our methods' implementation in the following sections.
 
